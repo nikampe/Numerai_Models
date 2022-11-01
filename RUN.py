@@ -13,9 +13,9 @@ from src.models.nonlinear_models import NonlinearModels
 from src.predictions.predictions import Predicitons
 
 # Static Variables
-PUBL_ID = "XXXXXXXXXXXXXXXX"
-PRIV_KEY = "XXXXXXXXXXXXXXXX"
-MODEL_ID = "XXXXXXXXXXXXXXXX"
+PUBL_ID = "XXXXXXXXXXXXXX"
+PRIV_KEY = "XXXXXXXXXXXXXX"
+MODEL_ID = "XXXXXXXXXXXXXX" # MAIN_MODEL_NLK 
 
 def correlation(pred, target):
     ranked_pred = pred.rank(pct = True, method = "first")
@@ -56,7 +56,7 @@ def main():
     predictions.create_submission_file(df_pred_test, f"predictions_test.csv", model_name)
     predictions.create_submission_file(df_pred_live, f"predictions.csv", model_name)
     # Final Prediction Submission
-    # predictions.submit_predictions()
+    predictions.submit_predictions()
 
 if __name__ == "__main__":
     main()

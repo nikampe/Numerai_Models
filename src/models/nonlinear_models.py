@@ -60,16 +60,21 @@ class NonlinearModels:
         X_live = self.X_live
         # Model Specification
         params = {
-            "max_depth": [5, 10, 20], # Max depth of the tree -->
-            "min_samples_split": [50, 100, 500], # Min number of samples required to split internal node -->
-            "min_samples_leaf": [50, 100, 500], # Min number of samples required at a leaf node --> 
-            "max_features": ["log2", "sqrt"]} # Min number of features considered for best split  --> "log2"
+            "max_depth": [5, 8, 10], # Max depth of the tree
+            "min_samples_split": [50, 100, 200], # Min number of samples required to split internal node
+            "min_samples_leaf": [50, 100, 200], # Min number of samples required at a leaf node
+            "max_features": ["log2", "sqrt"]} # Min number of features considered for best split
         model = DecisionTreeRegressor(criterion = "squared_error", splitter = "best")
         # Hyperparameter Tuning (Penalty Parameter Alpha)
-        best_params = {} # Min number of features considered for best split  --> "log2"
+        best_params = {
+            "max_depth": 5,
+            "min_samples_split": 50,
+            "min_samples_leaf": 200,
+            "max_features": "sqrt"
+        }
         if bool(best_params) == False:
             best_params = grid_search_cross_validation(self.data_train, model, params, neutralizing = neutralizing)
-        model.set_params(**best_params[0])       
+        model.set_params(**best_params)       
         # Model Fit
         model.fit(X_train, y_train)
         # Model Prediction - Train Data

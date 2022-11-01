@@ -1,16 +1,12 @@
 # Numerai_Models
-Weekly Model Predictions for Numerai Hedge Fund Competition
+Regular Model Predictions for Numerai Hedge Fund Competition
 
 ## Documentation
 
-### Week 2, Round 331 (Current)
+### Current: Round 345
 - Manual Grid Search and Cross Validation Algorithm
 - New Models: KNN Regression, Regression Tree
-
-### Week 1, Round 330
-- Data Pipeline Setup
-- Model Setup (under sklearn)
-- New Models: OLS, Ridge, Lasso
+- Final Predictions: Regression Tree
 
 ## General Introduction
 

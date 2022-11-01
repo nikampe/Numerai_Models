@@ -14,9 +14,8 @@ def corr(y_true, y_pred, eras):
     return corr
 
 class Statistics:
-    def __init__(self):
-        data = Data()
-        self.data_train, self.data_test, self.data_live = data.import_data()
+    def __init__(self, data_train, data_test, data_live):
+        self.data_train, self.data_test, self.data_live = data_train, data_test, data_live
         self.X_train, self.y_train = feature_target_extraction(self.data_train)
         self.X_test, self.y_test = feature_target_extraction(self.data_test)
         self.X_live = feature_extraction(self.data_live)
@@ -57,16 +56,30 @@ class Statistics:
         feature_target_corr_ser = pd.Series(feature_target_corr).sort_values()
         print("Feature-Target Correlations:\n", feature_target_corr_ser)
 
-    def plots(self):
+class Plots:
+    def __init__(self, data_train, data_test, data_live):
+        self.data_train, self.data_test, self.data_live = data_train, data_test, data_live
+        self.X_train, self.y_train = feature_target_extraction(self.data_train)
+        self.X_test, self.y_test = feature_target_extraction(self.data_test)
+        self.X_live = feature_extraction(self.data_live)
+
+    def features_over_time(self):
         data_train = self.data_train
         data_train["era_int"] = data_train.era.str.slice(3).astype(int)
         # Distribution of Eras
-        plt.plot(data_train.groupby("era_int").size())
-        plt.title("Distribution of Eras | Training Data", size = 14)
+        eras = data_train["era"].unique()
+        features = [col for col in data_train if col.startswith("feature")]
+        for era in eras:
+            data_train_plot = data_train[data_train["era"] == era]
+            plt.plot(data_train_plot[features])
+        plt.title("Features over Time | Training Data", size = 14)
         plt.xlabel("Eras", size = 12)
-        plt.ylabel("Count", size = 12)
+        plt.ylabel("Value", size = 12)
+        # plt.legend()
         plt.show()
 
 if __name__ == "__main__":
-    statistics = Statistics()
-    statistics.correlations()
+    data = Data()
+    data_train, data_test, data_live = data.import_data()
+    statistics = Plots(data_train, data_test, data_live)
+    statistics.features_over_time()
