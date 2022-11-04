@@ -13,9 +13,9 @@ from src.models.nonlinear_models import NonlinearModels
 from src.predictions.predictions import Predicitons
 
 # Static Variables
-PUBL_ID = "XXXXXXXXXXXXXX"
-PRIV_KEY = "XXXXXXXXXXXXXX"
-MODEL_ID = "XXXXXXXXXXXXXX" # MAIN_MODEL_NLK 
+PUBL_ID = "XXXXXXXXXXXX"
+PRIV_KEY = "XXXXXXXXXXXX"
+MODEL_ID = "XXXXXXXXXXXX" # MAIN_MODEL_NLK 
 
 def correlation(pred, target):
     ranked_pred = pred.rank(pct = True, method = "first")
@@ -42,7 +42,7 @@ def main():
     linear_models = LinearModels(data_train_processed, data_test_processed, data_live_processed)
     nonlinear_models = NonlinearModels(data_train_processed, data_test_processed, data_live_processed)
     # Prediction Generation
-    model_name, df_pred_train, df_pred_test, df_pred_live = nonlinear_models.decision_tree(neutralizing = True)
+    model_name, df_pred_train, df_pred_test, df_pred_live = nonlinear_models.decision_tree(neutralizing = True, retrain = True)
     # In-Sample Model Evaluation
     eval_score_is = model_evaluation(df_pred_train)
     print(f"In-Sample (IS) Correlation Score: {eval_score_is}")
@@ -52,11 +52,11 @@ def main():
     print(f"Out-of-Sample (OOS) Correlation Score: {eval_score_oos}")
     df_pred_test.drop(["target"], axis = 1, inplace = True)
     # Final Prediction File
-    predictions = Predicitons(PUBL_ID, PRIV_KEY, MODEL_ID)
+    predictions = Predicitons(PUBL_ID, PRIV_KEY)
     predictions.create_submission_file(df_pred_test, f"predictions_test.csv", model_name)
     predictions.create_submission_file(df_pred_live, f"predictions.csv", model_name)
     # Final Prediction Submission
-    predictions.submit_predictions()
+    predictions.submit_predictions(MODEL_ID)
 
 if __name__ == "__main__":
     main()

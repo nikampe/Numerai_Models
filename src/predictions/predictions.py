@@ -6,11 +6,10 @@ from pathlib import Path
 
 class Predicitons:
     
-    def __init__(self, publ_id, priv_key, model_id):
+    def __init__(self, publ_id, priv_key):
         os.chdir('/Users/niklaskampe/Desktop/Coding/Numerai_Models/')
         self.pred_dir = ""
         self.cwd = os.getcwd()
-        self.model_id = model_id
         self.api = numerapi.NumerAPI(publ_id, priv_key)
 
     def create_prediction_directory(self, model_name):
@@ -29,10 +28,11 @@ class Predicitons:
         os.chdir(self.cwd)
         print(f"Submission File '{file_name}' Successfully Created.")
 
-    def submit_predictions(self):
+    def submit_predictions(self, model_id):
         os.chdir(self.pred_dir)
+        print(os.chdir)
         try:
-            self.api.upload_predictions("predictions.csv", model_id = self.model_id)
+            self.api.upload_predictions("predictions.csv", model_id = model_id)
             print("Predictions Successfully Submitted.")     
         except:
             "Error in API submission."

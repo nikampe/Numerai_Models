@@ -7,53 +7,54 @@ from pathlib import Path
 
 # Import Objects
 sys.path.insert(1, '/Users/niklaskampe/Desktop/Coding/Numerai_Models/src/') 
-from utils.helpers import read_csv
+from utils.helpers import read_csv, read_parquet
 
 class Data:
+
     def __init__(self):
         os.chdir('/Users/niklaskampe/Desktop/Coding/Numerai_Models/')
         self.data_dir = ""
-        self.file_dir = ""
+        self.current_round = ""
         self.cwd = os.getcwd()
         self.api = numerapi.NumerAPI()
+
     def create_data_directory(self):
         try:
-            current_round = self.api.get_current_round()
+            self.current_round = self.api.get_current_round()
         except:
             print("Error in API Call.")
-        self.data_dir = f"./data/Round_{current_round}"
-        self.file_dir = self.data_dir + f"/numerai_dataset_{current_round}"
+        self.data_dir = f"./data/Round_{self.current_round}"
         if os.path.exists(self.data_dir) == False:
             Path(self.data_dir).mkdir(parents = False, exist_ok = True)
+
     def download_data(self):
         print("---------- Data Download ----------")
         self.create_data_directory()
         dir_list = os.listdir(self.data_dir)
-        if len(dir_list) == 0:
+        if len(dir_list) == 3:
             try:
                 os.chdir(self.data_dir)
-                self.api.download_current_dataset(unzip = True)
+                # self.api.download_dataset(filename = 'v4/train.parquet', dest_path = "data_train.parquet", round_num = self.current_round)
+                # self.api.download_dataset(filename = 'v4/validation.parquet', dest_path = "data_validation.parquet", round_num = self.current_round)
+                # self.api.download_dataset(filename = 'v4/live.parquet', dest_path = "data_live.parquet", round_num = self.current_round)
                 os.chdir(self.cwd)
             except:
                 print("Error in API Call.")
         else:
             print("Data Sets already Downloaded.\n")
+
     def import_data(self):
         self.download_data()
         print("---------- Data Import ----------")
-        training_path = self.file_dir + "/numerai_training_data.csv"
-        tournament_path = self.file_dir + "/numerai_tournament_data.csv"
-        data_train = read_csv(training_path)
-        data_tournament = read_csv(tournament_path)
+        print("Import Training Data ...")
+        data_train = read_parquet(self.data_dir + "/data_train.parquet")
+        print("Import Validation Data ...")
+        data_validation = read_parquet(self.data_dir + "/data_validation.parquet")
+        print("Import Live Data ...")
+        data_live = read_parquet(self.data_dir + "/data_live.parquet")
         print("Data successfully Imported.\n")
-        data_test = data_tournament[data_tournament.data_type == "validation"]
-        data_live = data_tournament[data_tournament.data_type == "live"]
-        # print("Train, Test & Live Data Set succesfully Imported.")
-        # print("Train Data Set:\n", data_train.head(n = 5))
-        # print("Test Data Set:\n", data_test.head(n = 5))
-        # print("Live Data Set:\n", data_live.head(n = 5))
-        return data_train, data_test, data_live
+        return data_train, data_validation, data_live
 
 if __name__ == "__main__":
     data = Data()
-    data.import_data()
+    data.download_data()
